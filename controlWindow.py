@@ -43,7 +43,7 @@ class ControlWindow(QWidget):
         #
 
         # vertical button layout
-        self.buttonLayout = QVBoxLayout(self)
+        self.buttonLayout = QVBoxLayout()
         spacer = QSpacerItem(10,30)
         self.buttonLayout.addItem(spacer)
 
@@ -82,7 +82,7 @@ class ControlWindow(QWidget):
 
 
         # vertical selection box layout
-        self.selectionLayout = QVBoxLayout(self)
+        self.selectionLayout = QVBoxLayout()
         spacer = QSpacerItem(10,30)
         self.selectionLayout.addItem(spacer)
 

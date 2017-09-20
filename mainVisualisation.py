@@ -136,7 +136,20 @@ class MainWindow(QWidget):
 
 
         #self.horizontalLayout.addWidget(self.plotWindow)
-        self.plotWindow.show()
+        #self.plotWindow.show()
+
+
+        self.cw = ControlWindow(mainWindow=self, handler=self.handler,parent=None)
+        self.cw.showFrameNum(0)
+        self.cw.showGaussianNum(0)
+
+        self.mainLayout = QHBoxLayout(self)
+
+        self.mainLayout.addWidget(self.cw,1)
+        self.mainLayout.addWidget(self.plotWindow,5)
+
+        self.setGeometry(100,100,900,300)
+        self.show()
 
 
 
@@ -155,16 +168,8 @@ if __name__ == '__main__':
         mainWindow = MainWindow(data_path = sys.argv[1],
                                 image_path = sys.argv[2])
 
-    cw = ControlWindow(mainWindow=mainWindow, handler=mainWindow.handler,parent=None)
-    cw.showFrameNum(0)
-    cw.showGaussianNum(0)
 
 
-    
-    cw.setGeometry(100,100,100,700)
-    x,y,w,h = cw.frameGeometry().getCoords()
-
-    mainWindow.plotWindow.setGeometry(w,100,1500,h-x)
 
     sys.exit(app.exec_())
     

@@ -440,11 +440,4 @@ class DataHandler():
 
 
 
-if __name__ == '__main__':
-    dh = DataHandler(image_path = 'video_frames/car_pursuit')
-    dh.readAss('subtitle_data/')
-    dh.gazePointsToArray()
-    dh.loadFramesAsGLImageItems()
-
-
 

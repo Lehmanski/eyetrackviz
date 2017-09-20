@@ -5,8 +5,8 @@ from os.path import isdir
 from os import path 
 
 
-in_path = 'video_data/ball_game_ass.mkv'
-out_path = 'video_frames/ball_game'
+in_path = 'video_data/thimblering_ass.mkv'
+out_path = 'video_frames/thimblering'
 
 if not isdir(out_path):
 	makedirs(out_path)

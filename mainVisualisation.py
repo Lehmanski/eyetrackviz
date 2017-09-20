@@ -66,9 +66,6 @@ class MainWindow(QWidget):
         self.handler.aoisToGLLinePlotItems(option='opaque')
 
 
-
-
-
         """
         Visualization and Plotting
         """
@@ -160,7 +157,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
 
-    if len(sys.argv)<=4:
+    if len(sys.argv)>3:
         mainWindow = MainWindow(data_path = sys.argv[1],
                                 image_path = sys.argv[2],
                                 until_frame = int(sys.argv[3]))

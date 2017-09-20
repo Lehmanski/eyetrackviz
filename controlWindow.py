@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QLabel, QSizePolicy, QSlider, QSpacerItem, \
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QLabel, QCheckBox, QSizePolicy, QSlider, QSpacerItem, \
     QVBoxLayout, QWidget, QPushButton, QToolButton, QMenu, QLineEdit
 import re
 
@@ -15,8 +15,7 @@ class ControlWindow(QWidget):
         self.heatmap_toggle = True
         self.AOIs_toggle = True
         self.AOILines_toggle = True
-        self.gaze_points_toggle = True
-        self.gaussian_toggle = True
+        self.gaze_paths_toggle = True
 
         self.horizontalLayout = QHBoxLayout(self)
 
@@ -48,32 +47,38 @@ class ControlWindow(QWidget):
         self.buttonLayout.addItem(spacer)
 
         # button to de/activate aois:
-        self.buttonAOIs = QPushButton('aois (volume)')
+        self.buttonAOIs = QCheckBox('aois (volume)')
+        self.buttonAOIs.setChecked(True)
         self.buttonAOIs.clicked.connect(self.toggleAOIs)
         self.buttonLayout.addWidget(self.buttonAOIs)
 
         # button to de/activate aois:
-        self.buttonAOIs = QPushButton('aois (line)')
+        self.buttonAOIs = QCheckBox('aois (line)')
+        self.buttonAOIs.setChecked(True)
         self.buttonAOIs.clicked.connect(self.toggleAOILines)
         self.buttonLayout.addWidget(self.buttonAOIs)
 
         # button to de/activate gaze paths:
-        self.buttonGaze = QPushButton('gaze paths')
+        self.buttonGaze = QCheckBox('gaze paths')
+        self.buttonGaze.setChecked(True)
         self.buttonGaze.clicked.connect(self.toggleGaze)
         self.buttonLayout.addWidget(self.buttonGaze)
 
         # button to de/activate heatmaps:
-        self.buttonHeatmap = QPushButton('heatmaps')
+        self.buttonHeatmap = QCheckBox('heatmaps')
+        self.buttonHeatmap.setChecked(True)
         self.buttonHeatmap.clicked.connect(self.toggleHeatmaps)
         self.buttonLayout.addWidget(self.buttonHeatmap)
 
         # button to de/activate gaussians:
-        self.buttonGaussian = QPushButton('gaze points')
+        self.buttonGaussian = QCheckBox('gaze points')
+        self.buttonGaussian.setChecked(True)
         self.buttonGaussian.clicked.connect(self.toggleGaussians)
         self.buttonLayout.addWidget(self.buttonGaussian)
 
         # button to de/activate gaussians:
-        self.buttonFrame = QPushButton('video frames')
+        self.buttonFrame = QCheckBox('video frames')
+        self.buttonFrame.setChecked(True)
         self.buttonFrame.clicked.connect(self.toggleFrames)
         self.buttonLayout.addWidget(self.buttonFrame)
 
@@ -166,34 +171,34 @@ class ControlWindow(QWidget):
         for gx in self.handler.gaussians:
             gx.setVisible(self.gaussian_toggle)
 
+    # gaze paths
     def toggleGaze(self):
-        self.gaze_points_toggle = not self.gaze_points_toggle
-        for line in self.handler.gazePointsLinePlotItems:
-            line.setVisible(self.gaze_points_toggle)
+        self.gaze_paths_toggle = not self.gaze_paths_toggle
+        self.toggleSingleGazePath()
 
+    def toggleSingleGazePath(self):
+        for a in self.gazePathsSelectionMenu.actions():
+            self.handler.gazePointsLinePlotItems[int(a.text())].setVisible(a.isChecked()*self.gaze_paths_toggle)
+
+
+    # AOI meshes
     def toggleAOIs(self):
         self.AOIs_toggle = not self.AOIs_toggle
-        for mesh in self.handler.aoiMeshes:
-            mesh.setVisible(self.AOIs_toggle)
-
-    def toggleAOILines(self):
-        self.AOILines_toggle = not self.AOILines_toggle
-        for lines in self.handler.aoiLines:
-            for line in lines:
-                line.setVisible(self.AOILines_toggle)
+        self.toggleSingleAOIs()
 
     def toggleSingleAOIs(self):
         for a in self.aoiSelectionMenu.actions():
-            self.handler.aoiMeshes[int(a.text())].setVisible(a.isChecked())
+            self.handler.aoiMeshes[int(a.text())].setVisible(a.isChecked()*self.AOIs_toggle)
+    # AOI lines
+    def toggleAOILines(self):
+        self.AOILines_toggle = not self.AOILines_toggle
+        self.toggleSingleAOILines()
+
 
     def toggleSingleAOILines(self):
         for a in self.aoiLineSelectionMenu.actions():
             for line in self.handler.aoiLines[int(a.text())]:
-                line.setVisible(a.isChecked())
-
-    def toggleSingleGazePath(self):
-        for a in self.gazePathsSelectionMenu.actions():
-            self.handler.gazePointsLinePlotItems[int(a.text())].setVisible(a.isChecked())
+                line.setVisible(a.isChecked()*self.AOILines_toggle)
 
 
     def toggleHeatmaps(self):
@@ -263,10 +268,3 @@ class Slider(QWidget):
 
     def setLabelValue(self, value):
         self.label.setText("{0:.4g}".format(value))
-
-
-"""
-class Button(QWidget):
-    def __init__(self, text, parent=None)
-    super(Button,self).__init__(parent=None)
-"""

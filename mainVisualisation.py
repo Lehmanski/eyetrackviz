@@ -23,18 +23,18 @@ from controlWindow import *
 
 class PlotWindow(GLViewWidget):
     def __init__(self, parent=None):
-        super(PlotWindow, self).__init__(parent=parent)
+        super(PlotWindow, self).__init__(parent=None)
 
 
 
 
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, data_path, image_path, until_frame=None):
         super(MainWindow, self).__init__()
         # create a data reader object
-        self.handler = DataHandler(data_path = 'subtitle_data/car_pursuit',
-                                   image_path = 'video_frames/car_pursuit',
+        self.handler = DataHandler(data_path = data_path,
+                                   image_path = image_path,
                                    image_spacing = -5,
                                    sigma = 5)
 
@@ -47,7 +47,9 @@ class MainWindow(QWidget):
         # throw away bunch of data (for faster testing)
 
 
-        self.handler.gaze_points = self.handler.gaze_points[:20,:,:]
+        if until_frame is not None:
+            self.handler.gaze_points = self.handler.gaze_points[:until_frame,:,:]
+
         # rescale images to smaller size 
         self.handler.scaling_factor = .2
         # load the video frames (single .jpg images in folder) [frame size is obtained her]
@@ -134,15 +136,25 @@ class MainWindow(QWidget):
 
 
         #self.horizontalLayout.addWidget(self.plotWindow)
-        #self.plotWindow.show()
+        self.plotWindow.show()
 
 
 
 
 
 if __name__ == '__main__':
+
     app = QApplication(sys.argv)
-    mainWindow = MainWindow()
+
+
+    if len(sys.argv)<3:
+        mainWindow = MainWindow(data_path = sys.argv[1],
+                                image_path = sys.argv[2],
+                                until_frame = int(sys.argv[3]))
+    else:
+        mainWindow = MainWindow(data_path = sys.argv[1],
+                                image_path = sys.argv[2])
+
     cw = ControlWindow(mainWindow=mainWindow, handler=mainWindow.handler,parent=None)
     cw.showFrameNum(0)
     cw.showGaussianNum(0)
@@ -154,6 +166,6 @@ if __name__ == '__main__':
 
     mainWindow.plotWindow.setGeometry(w,100,1500,h-x)
 
-    cw.horizontalLayout.addWidget(mainWindow.plotWindow)
+    #cw.horizontalLayout.addWidget(mainWindow.plotWindow)
     
    

@@ -147,7 +147,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
 
-    if len(sys.argv)<3:
+    if len(sys.argv)<=4:
         mainWindow = MainWindow(data_path = sys.argv[1],
                                 image_path = sys.argv[2],
                                 until_frame = int(sys.argv[3]))
@@ -166,6 +166,6 @@ if __name__ == '__main__':
 
     mainWindow.plotWindow.setGeometry(w,100,1500,h-x)
 
-    #cw.horizontalLayout.addWidget(mainWindow.plotWindow)
+    sys.exit(app.exec_())
     
    

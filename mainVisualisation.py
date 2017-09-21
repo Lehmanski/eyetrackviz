@@ -39,6 +39,7 @@ class MainWindow(QWidget):
         self.handler = DataHandler(data_path = data_path,
                                    image_path = image_path,
                                    image_spacing = -5,
+                                   scaling_factor = .25,
                                    sigma = 5)
 
 
@@ -53,8 +54,6 @@ class MainWindow(QWidget):
         if until_frame is not None:
             self.handler.gaze_points = self.handler.gaze_points[:until_frame,:,:]
 
-        # rescale images to smaller size 
-        self.handler.scaling_factor = .2
         # load the video frames (single .jpg images in folder) [frame size is obtained her]
         self.handler.loadFramesAsGLImageItems()
         # transform gaze points data into gaussians (ImageItems)

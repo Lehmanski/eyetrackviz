@@ -24,6 +24,9 @@ from controlWindow import *
 class PlotWindow(GLViewWidget):
     def __init__(self, parent=None):
         super(PlotWindow, self).__init__(parent=None)
+        self.opts['distance'] = 600
+        self.opts['elevation'] = 20
+        
 
 
 

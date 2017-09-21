@@ -25,7 +25,8 @@ class DataHandler():
         self.image_path = image_path
         self.data_path = data_path
         self.keyFrames = []
-
+        # get get frame size:
+        self.loadFrameByNumber(0)
     '''
     Helper Functions
     '''
@@ -33,8 +34,10 @@ class DataHandler():
         norm = plt.Normalize(vmin, vmax)
         cm = colormap(norm(inp))*255
         alpha = (inp/inp.max())*100
+        if np.isnan(alpha).any():
+            alpha = np.ones(alpha.shape)
         alpha[alpha<30] = 0
-        alpha[alpha>=30] += 155
+        alpha[alpha>=30] += 200
         cm[:,:,-1] = alpha
         cm[:,:,-1] = (inp/inp.max())*255
         return cm
@@ -138,8 +141,8 @@ class DataHandler():
                 data[f_start,:2,sx] = point
                 data[f_start,2,sx] = f_start
         self.gaze_points = data
-        self.cleanGazePointsArray()
         self.rescaleData()
+        self.cleanGazePointsArray()
 
     def cleanGazePointsArray(self, rep=True):
         for ix in range(self.gaze_points.shape[2]):
@@ -154,6 +157,12 @@ class DataHandler():
                 if any(d[jx,:-1] == 0):
                     # substitute for entry before
                     d[jx,:-1] = d[jx-1,:-1]
+                # cant look outside the window
+                d[jx,0] = np.max([0,d[jx,0]])
+                d[jx,0] = np.min([self.frame_size[0],d[jx,0]])
+                d[jx,1] = np.max([0,d[jx,1]])
+                d[jx,1] = np.min([self.frame_size[1],d[jx,1]])
+                # leaky integration of coordinates (should make path smoother)
                 k = 0.3
                 d[jx,:-1] = k*d[jx,:-1] + (1-k)*d[jx,:-1]
             self.gaze_points[:,:,ix] = d
@@ -418,7 +427,7 @@ class DataHandler():
                 break
 
             self.frames.append(frame)
-        self.rescaleData()
+        #self.rescaleData()
 
 
     def loadKeyFrames(self, key_frame_list, rotation=[90,0,1,0], scale = .5):

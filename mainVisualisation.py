@@ -40,7 +40,7 @@ class MainWindow(QWidget):
                                    image_path = image_path,
                                    image_spacing = -5,
                                    scaling_factor = .25,
-                                   sigma = 5)
+                                   sigma = 3)
 
 
         """

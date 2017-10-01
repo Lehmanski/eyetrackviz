@@ -86,12 +86,17 @@ class DataHandler():
             file_paths = sorted([path.join(self.data_path, f) for f in file_paths if f.endswith('.ass')])
             # data containers:
             self.gaze_points = []
+            self.gp_titles = []
+            self.aoi_titles = []
             self.aois = []
             self.max_time = 0
             for file_path in file_paths:
                 file = open(file_path)
                 line = file.readline()
                 data = []
+                while not line.startswith('Title:'):
+                    line = file.readline()
+                title = line.split(':')[1]
                 while not line.startswith('Dialogue:'):
                     line = file.readline()
                 for ix,line in enumerate(file.readlines()):
@@ -108,7 +113,7 @@ class DataHandler():
                         data.append([x,y,f_start,f_stop])
 
                     elif b.startswith('m'):
-                        marker_type = 'aoi'
+                        marker_type = 'aoi' 
                         t_start = a.split(',')[1]
                         t_stop = a.split(',')[2]
                         # get all frame indices, where soi is visible:
@@ -124,8 +129,10 @@ class DataHandler():
                 if marker_type == 'gaze_points':
                     self.gaze_points.append(data)
                     self.max_time = max([self.max_time,np.max(data[:,2])])
+                    self.gp_titles.append(title)
                 elif marker_type == 'aoi':
                     self.aois.append(data)
+                    self.aoi_titles.append(title)
             self.gazePointsToArray()
 
     def gazePointsToArray(self):
@@ -143,6 +150,10 @@ class DataHandler():
         self.gaze_points = data
         self.rescaleData()
         self.cleanGazePointsArray()
+        # throw away initial 5 frames, since data will be messy anyway
+        for ix in range(self.gaze_points.shape[2]):
+            self.gaze_points[:5,0,ix] = self.gaze_points[5,0,ix]
+            self.gaze_points[:5,1,ix] = self.gaze_points[5,1,ix]
 
     def cleanGazePointsArray(self, rep=True):
         for ix in range(self.gaze_points.shape[2]):
@@ -417,7 +428,7 @@ class DataHandler():
     def loadFramesAsGLImageItems(self, rotation=[90,0,1,0], 
                                  x_shift=0, y_shift=0, option='translucent'):
         self.frames = []
-        for idx in self.gaze_points[:,2,0]:
+        for idx in range(self.gaze_points.shape[0]):
             print('loading video frame #{0}'.format(idx))
             frame = self.loadFrameByNumber(int(idx), rotation=rotation, 
                                            x_shift=x_shift, y_shift= y_shift,

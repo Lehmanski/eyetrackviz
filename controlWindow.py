@@ -94,8 +94,8 @@ class ControlWindow(QWidget):
         self.aoiSelection = QToolButton()
         self.aoiSelection.setText('select AOI (volume)')
         self.aoiSelectionMenu = QMenu()
-        for ax in range(len(self.handler.aois)):
-            a = self.aoiSelectionMenu.addAction(str(ax))
+        for t in self.handler.aoi_titles:
+            a = self.aoiSelectionMenu.addAction(t)
             a.setCheckable(True)
             a.setChecked(True)
             a.changed.connect(self.toggleSingleAOIs)
@@ -106,8 +106,8 @@ class ControlWindow(QWidget):
         self.aoiLineSelection = QToolButton()
         self.aoiLineSelection.setText('select AOI (lines)')
         self.aoiLineSelectionMenu = QMenu()
-        for ax in range(len(self.handler.aois)):
-            a = self.aoiLineSelectionMenu.addAction(str(ax))
+        for t in self.handler.aoi_titles:
+            a = self.aoiLineSelectionMenu.addAction(t)
             a.setCheckable(True)
             a.setChecked(True)
             a.changed.connect(self.toggleSingleAOILines)
@@ -118,8 +118,8 @@ class ControlWindow(QWidget):
         self.gazePathsSelection = QToolButton()
         self.gazePathsSelection.setText('select gaze paths')
         self.gazePathsSelectionMenu = QMenu()
-        for ax in range(len(self.handler.gazePointsLinePlotItems)):
-            a = self.gazePathsSelectionMenu.addAction(str(ax))
+        for t in self.handler.gp_titles:
+            a = self.gazePathsSelectionMenu.addAction(t)
             a.setCheckable(True)
             a.setChecked(True)
             a.changed.connect(self.toggleSingleGazePath)
@@ -178,7 +178,8 @@ class ControlWindow(QWidget):
 
     def toggleSingleGazePath(self):
         for a in self.gazePathsSelectionMenu.actions():
-            self.handler.gazePointsLinePlotItems[int(a.text())].setVisible(a.isChecked()*self.gaze_paths_toggle)
+            idx = self.handler.gp_titles.index(a.text())
+            self.handler.gazePointsLinePlotItems[idx].setVisible(a.isChecked()*self.gaze_paths_toggle)
 
 
     # AOI meshes
@@ -188,7 +189,8 @@ class ControlWindow(QWidget):
 
     def toggleSingleAOIs(self):
         for a in self.aoiSelectionMenu.actions():
-            self.handler.aoiMeshes[int(a.text())].setVisible(a.isChecked()*self.AOIs_toggle)
+            idx = self.handler.aoi_titles.index(a.text())
+            self.handler.aoiMeshes[idx].setVisible(a.isChecked()*self.AOIs_toggle)
     # AOI lines
     def toggleAOILines(self):
         self.AOILines_toggle = not self.AOILines_toggle
@@ -197,7 +199,8 @@ class ControlWindow(QWidget):
 
     def toggleSingleAOILines(self):
         for a in self.aoiLineSelectionMenu.actions():
-            for line in self.handler.aoiLines[int(a.text())]:
+            idx = self.handler.aoi_titles.index(a.text())
+            for line in self.handler.aoiLines[idx]:
                 line.setVisible(a.isChecked()*self.AOILines_toggle)
 
 
